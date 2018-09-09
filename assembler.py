@@ -23,8 +23,8 @@ opcodes = {
 	"SKIPCOND"	:	"8",
 	"JNS"	:	"0",
 	"JUMPI"	:	"C",
-	"STOREI":	"2",
-	"LOADI"	:	"1",
+	"STOREI":	"D",
+	"LOADI"	:	"E",
 	"HALT"	:	"7"
 	
 	}

@@ -1,10 +1,10 @@
 
-Start,	Load X
-Add ONE
-Store X
+Add Y
+Output
+Subt X
 Output
 
 Halt
 
-X, DEC 0
-ONE, DEC 1
+X, DEC 5
+Y, DEC 6
