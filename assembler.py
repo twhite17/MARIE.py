@@ -29,6 +29,27 @@ opcodes = {
 	
 	}
 
+includeDirective = {
+	
+	"ADD"	:	True,
+	"SUBT"	:	True,
+	"ADDI"	:	True,
+	"CLEAR"	:	False,
+	"LOAD"	:	True,
+	"STORE"	:	True,
+	"INPUT"	:	False,
+	"OUTPUT":	False,
+	"JUMP"	:	True,
+	"SKIPCOND"	:	True,
+	"JNS"	:	True,
+	"JUMPI"	:	True,
+	"STOREI":	True,
+	"LOADI"	:	True,
+	"HALT"	:	False
+	
+	}
+
+
 import convert
 
 
@@ -65,35 +86,39 @@ class Assembler:
 			text = file.read().upper().split("\n")
 		
 		self.code = []
-		for line in text:addresses
-			 self.code.append(line.split())
-	
+		for line in text:
+			if line != "":
+				self.code.append(line.split())
+		
+		self.build = ["" for i in range(len(self.code))]
+		
 	def getDirectives(self):
-		pass
+		for lineNum in range(len(self.code)):
+			line = self.code[lineNum]
+			if "," in line[0]:
+				self.directives[line[0].replace(",", "")] = Address(form="dec", addr=lineNum)
+
+				if line[1] == "DEC":
+					self.build[lineNum] = convert.decToHex(int(line[2]), 4)
+				elif line[1] == "HEX":
+					line[2] = convert.minHexLength(line[2], 4)
+					self.build[lineNum] = line[2]
 	
 	def getOpcodes(self):
-		pass
+		for lineNum in range(len(self.code)):
+			line = self.code[lineNum]
+			if line[0] in opcodes:
+				
+				if includeDirective[line[0]]:
+					addr = self.directives[line[1]].getHex()
+					self.build[lineNum] = opcodes[line[0]]+addr
+				else:
+					self.build[lineNum] = opcodes[line[0]]+"000"
 	
 	
 	def parse(self):
-		for lineNum in range(len(self.code)):
-			line = self.code[lineNum]
-			
-			if line[0] in opcodes:
-				
-				addr = self.directives[line[1]].getHex()
-				self.build.append(opcodes(line[0])+addr)
-			
-			elif "," in line[0]:
-				directives[line[0].replace(",", "")] = Address(form="dec", addr=lineNum)
-				
-				if line[1] == "DEC":
-					self.build.append(convert.decToHex(int(line[2]), 4))
-				elif line[1] == "HEX":
-					if len(line[2]) < 4:
-						for i in range(4-len(line)):
-							line[2] = "0"+line[2]
-					self.build.append(line[2])
+		self.getDirectives()
+		self.getOpcodes()
 				
 
 	def write(self, fileName=None):

@@ -16,6 +16,12 @@ hexToDecData = {
 	"F":15	
 	}
 
+def minHexLength(val, minLength):
+	if len(val) < minLength:
+		for i in range(minLength - val):
+			val = "0" + val
+	return val
+
 def isInteger(val):
 	r = True
 	try:
