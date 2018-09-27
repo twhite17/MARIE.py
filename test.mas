@@ -1,0 +1,9 @@
+Load X
+Add ONE
+Store X
+Output
+
+Halt
+
+X, DEC 0
+ONE, DEC 1
