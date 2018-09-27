@@ -103,6 +103,9 @@ class Assembler:
 				elif line[1] == "HEX":
 					line[2] = convert.minHexLength(line[2], 4)
 					self.build[lineNum] = line[2]
+				
+				self.code[lineNum][0] = self.code[lineNum][1]
+				self.code[lineNum][1] = self.code[lineNum][2]
 	
 	def getOpcodes(self):
 		for lineNum in range(len(self.code)):
