@@ -11,6 +11,12 @@ Why did I make this?
   
   2. Because I thought this would be a fun learning exercise
   
+Dependancies:
+  - Python3.X
+  _ numpy
+  
+That's it!
+  
 DISCLAIMERS:
 
 I am not in any way associated with the developers of MARIE.js and I am certainly not an expert when it comes to writing compilers and/or understanding hardware architectures.
