@@ -1,6 +1,8 @@
 
 
 import convert
+from numpy import int16
+from numpy import array
 
 opcodes = {
 	"ADD"	:	"3",
@@ -53,39 +55,28 @@ class Value:
 	def __getitem__(self, index):
 		return self._hex[index]
 
+def loadHex(val):
+	
+	val = val.lower()
+	
+	
+	
+
 class Memory:
 	
 	def __init__(self):
-		self.data = [[[Value() for i in range(16)] for i2 in range(16)] for i in range(16)]
-	
-	def print(self, form="dec"):
-		
-		sect = ""
-		
-		
-		for x in self.data:
-			
-			block = ""
-			
-			for y in x:
-				
-				row = ""
-				
-				for z in y:
-					
-					row += " "+format(z.getDec(), "03d")+" "
-				
-				block += row + "\n"
-		
-			sect += block + "\n" +("-"*80)+ "\n"
-			
-		print(sect)
+		self.data = array([int16(0) for i in range(2**12)])
 	
 	def loadAddr(self, addr):
-		return self.data[convert.hexToDec(addr[0])][convert.hexToDec(addr[1])][convert.hexToDec(addr[2])].getHex()
+		if addr < 0:
+			addr += 0x10000
+		return self.data[addr]
 	
 	def storeAddr(self, addr, val):
-		self.data[convert.hexToDec(addr[0])][convert.hexToDec(addr[1])][convert.hexToDec(addr[2])].setHex(val)
+		if addr < 0:
+			addr += 0x10000
+		self.data[addr] = val
+	
 		
 
 class Emulator:
@@ -93,13 +84,13 @@ class Emulator:
 	def __init__(self, inp = None, fileName=None):
 		#assert not (inp == None and fileName == None), AssertionError("One of inp or fileName must be non Nonetype.")
 		self.memory = Memory()
-		self.AC 	= Value()
-		self.IR 	= Value()
-		self.MAR 	= Value(3)
-		self.MBR 	= Value()
-		self.PC 	= Value(3)
-		self.IN 	= Value()
-		self.OUT 	= Value()
+		self.AC 	= int16(0)
+		self.IR 	= int16(0)
+		self.MAR 	= int16(0)
+		self.MBR 	= int16(0)
+		self.PC 	= int16(0)
+		self.IN 	= int16(0)
+		self.OUT 	= int16(0)
 		
 		if inp == None:
 			f = open(fileName, "r")
@@ -113,94 +104,127 @@ class Emulator:
 		#self.memory.print()
 	
 	def loadProgram(self, data):
-		x, y, z = 0, 0, 0
-		for line in data:
-			
-			addr = convert.decToHex(x, 1)+convert.decToHex(y, 1)+convert.decToHex(z, 1)
-			self.memory.storeAddr(addr, line)
-			
-			z += 1
-			if z >= 16:
-				z = 0
-				y += 1
-				
-				if y >= 16:
-					y = 0
-					x += 1
+		
+		for index in range(len(data)):
+			self.memory.storeAddr(index, int16(int(data[index], 16)))
 			
 		
 	def __iter__(self):
-		self.PC.setHex("000")
+		self.PC = int16(0)
+		self.n = 0
 		return self
 	
 	def __next__(self):
 		
 		#print(self.memory.loadAddr(self.PC.getHex()))
-		self.IR.setHex(self.memory.loadAddr(self.PC.getHex()))
+		#print(self.PC)
+		self.IR = self.memory.loadAddr(self.PC)
 		#print(self.IR.getHex())
 		
-		ins = self.IR.getHex()[0]
+		
+		tmp = convert.decToHex(self.IR, 4)
+		
+		if self.n < 30:
+			self.n += 1
+			#print(convert.decToHex(self.IR, 4), int(tmp[1:], 16))
+		
+		
+		
+		ins = tmp[0]
+		X = int16(int(tmp[1:], 16))
 		
 		#print(ins)
 		
-		X = self.IR.getHex()[1:]
-		
 		if opcodes["ADD"] == ins:
-			self.MAR.setHex(X)
-			self.MBR.setHex(self.memory.loadAddr(self.MAR.getHex()))
-			self.AC.setDec(self.AC.getDec() + self.MBR.getDec())
+			self.MAR = X
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.AC = self.AC + self.MBR
 			
 			
 			
 		elif opcodes["SUBT"] == ins:
-			self.MAR.setHex(X)
-			self.MBR.setHex(self.memory.loadAddr(self.MAR))
-			self.AC.setDec(self.AC.getDec() - self.MBR.getDec())
-			
+			self.MAR = X
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.AC = self.AC - self.MBR
 			
 		elif opcodes["ADDI"] == ins:
+			self.MAR = X
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.MAR = self.MBR
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.AC = self.AC + self.MBR
 			
-			pass
+			
 		elif opcodes["CLEAR"] == ins:
+			self.AC = int16(0)
 			
-			pass
 		elif opcodes["LOAD"] == ins:
+			self.MAR = X
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.AC = self.MBR
 			
-			pass
 		elif opcodes["STORE"] == ins:
+			self.MAR = X
+			self.MBR = self.AC
+			self.memory.storeAddr(self.MAR, self.AC)
 			
-			pass
 		elif opcodes["INPUT"] == ins:
 			
 			pass
 		elif opcodes["OUTPUT"] == ins:
-			print(self.AC.getDec())
+			print(self.AC)
 			
 		elif opcodes["JUMP"] == ins:
+			self.PC = X - 1
 			
-			pass
 		elif opcodes["SKIPCOND"] == ins:
+			if X == 0x000:
+				if self.AC < 0:
+					self.PC += 1
+			elif X == 0x400:
+				if self.AC == 0:
+					self.PC += 1
+			elif X == 0x800:
+				if self.AC > 0:
+					self.PC += 1
 			
-			pass
 		elif opcodes["JNS"] == ins:
+			self.MAR = X
+			self.MBR = self.PC
+			self.memory.storeAddr(self.MAR, self.MBR)
+			self.AC = X
+			self.PC = self.AC
 			
-			pass
 		elif opcodes["JUMPI"] == ins:
+			self.MAR = X
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.MAR = self.MBR
+			#print(self.MAR)
+			#self.MBR = self.memory.loadAddr(self.MAR)
+			#print(self.PC)
+
+			self.PC = self.MBR
 			
-			pass
 		elif opcodes["STOREI"] == ins:
+			self.MAR = X
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.MAR = self.MBR
+			self.memory.storeAddr(self.MAR, self.AC)
 			
-			pass
 		elif opcodes["LOADI"] == ins:
+			self.MAR = X
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.MAR = self.MBR
+			self.MBR = self.memory.loadAddr(self.MAR)
+			self.AC = self.MBR
 			
-			pass
 		elif opcodes["HALT"] == ins:
 			
 			raise StopIteration
 			
 			
 		
-		self.PC.setDec(self.PC.getDec() + 1)
+		self.PC += 1
 			
 		
 		

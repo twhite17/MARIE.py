@@ -88,7 +88,16 @@ class Assembler:
 		self.code = []
 		for line in text:
 			if line != "":
-				self.code.append(line.split())
+				
+				x = line.split()
+				
+				if x != []:
+				
+					self.code.append(x)
+		
+		#print(self.code)
+		
+		
 		
 		self.build = ["" for i in range(len(self.code))]
 		
@@ -113,7 +122,10 @@ class Assembler:
 			if line[0] in opcodes:
 				
 				if includeDirective[line[0]]:
-					addr = self.directives[line[1]].getHex()
+					try:
+						addr = self.directives[line[1]].getHex()
+					except KeyError:
+						addr = line[1]
 					self.build[lineNum] = opcodes[line[0]]+addr
 				else:
 					self.build[lineNum] = opcodes[line[0]]+"000"
@@ -133,7 +145,7 @@ class Assembler:
 			result += line + '\n'
 		
 		with open(fileName, "w") as file:
-			file.write(result)
+			file.write(result[:-1])
 		
 
 

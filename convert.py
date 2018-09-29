@@ -1,3 +1,5 @@
+from numpy import int16
+
 decToHexData = {
 	"10":"A",
 	"11":"B",
@@ -40,6 +42,8 @@ def _decToHex(val):
 
 def decToHex(val, minLength=3): # note Hexadecimal values are stored as Strings
 	r = ""
+	if val < 0:
+		val += 0x10000
 	while val > 0:
 		r = _decToHex(val % 16) + r
 		val = val // 16

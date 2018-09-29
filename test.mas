@@ -1,10 +1,47 @@
 
-Add Y
-Output
-Subt X
-Output
+Jump prog
+
+
+num1, DEC 0
+num2, DEC 0
+
+Mul, DEC 0
+	
+	Clear
+	Store mulRes
+	
+	startMul, Load num2
+	Skipcond 800
+	Jump endMul
+	
+	Subt One
+	Store num2
+	
+	Load mulRes
+	Add num1
+	Store mulRes
+	
+	
+	Jump startMul
+	
+	endMul, JumpI Mul
+
+mulRes, 	DEC 0
+One,		DEC 1
+
+
+prog, Load X
+	
+	Store num1
+	Load Y
+	Store num2
+	JnS Mul
+	Load mulRes
+	Output
+
 
 Halt
 
-X, DEC 5
-Y, DEC 6
+X, DEC 7
+Y, DEC 5
+R, DEC 0
