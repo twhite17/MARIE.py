@@ -13,7 +13,7 @@ Why did I make this?
   
 Dependancies:
   - Python3.X
-  _ numpy
+  - numpy
   
 That's it!
   
