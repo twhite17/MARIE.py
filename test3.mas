@@ -1,0 +1,45 @@
+
+
+
+Main,	Input
+	Store num1
+	Input
+	Store num2
+	JnS Mul
+	Load mulRes
+	Output
+	
+	Jump Main
+
+	
+
+num1, DEC 0
+num2, DEC 0
+
+/ Multiply Function
+
+Mul, DEC 0
+	
+	Clear
+	Store mulRes
+	
+	startMul, Load num2
+	Skipcond 800
+	Jump endMul
+	
+	Subt One
+	Store num2
+	
+	Load mulRes
+	Add num1
+	Store mulRes
+	
+	
+	Jump startMul
+	
+	endMul, JumpI Mul
+
+mulRes, 	HEX 0
+
+
+One,		HEX 1

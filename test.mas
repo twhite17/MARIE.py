@@ -1,9 +1,11 @@
 
-Jump prog
+Jump main
 
 
 num1, DEC 0
 num2, DEC 0
+
+/ Multiply Function
 
 Mul, DEC 0
 	
@@ -26,11 +28,32 @@ Mul, DEC 0
 	
 	endMul, JumpI Mul
 
-mulRes, 	DEC 0
-One,		DEC 1
+printStrAddr, DEC 0
+printStr, DEC 0
+	
+	startPrintStr, LoadI printStrAddr
+		Skipcond 800
+		Jump endPrintStr
+		
+		Output
+		Load printStrAddr
+		Add One
+		Store printStrAddr
+		
+		Jump startPrintStr
+				
+	
+	endPrintStr, JumpI printStr
+	
+	
+	
 
 
-prog, Load X
+mulRes, 	HEX 0
+One,		HEX 1
+
+/ Main Code
+main, Load X / Main Code
 	
 	Store num1
 	Load Y
@@ -38,6 +61,11 @@ prog, Load X
 	JnS Mul
 	Load mulRes
 	Output
+	
+	Load Str1Addr
+	Store printStrAddr
+	JnS printStr
+	
 
 
 Halt
@@ -45,3 +73,16 @@ Halt
 X, DEC 7
 Y, DEC 5
 R, DEC 0
+
+
+Str1Addr, ADR Str1
+Str1,	DEC 72
+		DEC 101
+		DEC 108
+		DEC 108
+		DEC 111
+		DEC 0
+		
+
+
+

@@ -20,7 +20,7 @@ hexToDecData = {
 
 def minHexLength(val, minLength):
 	if len(val) < minLength:
-		for i in range(minLength - val):
+		for i in range(minLength - len(val)):
 			val = "0" + val
 	return val
 

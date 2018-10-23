@@ -78,6 +78,8 @@ class Assembler:
 		self.load()
 		
 	def load(self, filePath=None):
+		
+		# loads file, capitalises all letters and splits it into a list at each newline #
 		if filePath != None:
 			self.filePath = filePath
 		
@@ -85,6 +87,22 @@ class Assembler:
 			
 			text = file.read().upper().split("\n")
 		
+		
+		
+		# Removes Comments #######################################
+		ntext = []
+		for line in text:
+			nline = ""
+			for ch in line:
+				if ch != "/":
+					nline += ch
+				else:
+					break
+			ntext.append(nline)		
+		text = ntext
+		
+		
+		# Removes empty lines so program takes up less space #
 		self.code = []
 		for line in text:
 			if line != "":
@@ -95,28 +113,61 @@ class Assembler:
 				
 					self.code.append(x)
 		
-		#print(self.code)
 		
 		
+		# where all the assembled code is stored ##############
+		self.build = ["" for i in range(len(self.code))] # there isn't actually any code yet 
 		
-		self.build = ["" for i in range(len(self.code))]
 		
 	def getDirectives(self):
+		ADRLookup = {}
+		
 		for lineNum in range(len(self.code)):
-			line = self.code[lineNum]
-			if "," in line[0]:
-				self.directives[line[0].replace(",", "")] = Address(form="dec", addr=lineNum)
+			
+			try:
+				line = self.code[lineNum]
+				if "," in line[0]:
+					self.directives[line[0].replace(",", "")] = Address(form="dec", addr=lineNum)
 
-				if line[1] == "DEC":
-					self.build[lineNum] = convert.decToHex(int(line[2]), 4)
-				elif line[1] == "HEX":
-					line[2] = convert.minHexLength(line[2], 4)
-					self.build[lineNum] = line[2]
+					if line[1] == "DEC":
+
+						self.build[lineNum] = convert.decToHex(int(line[2]), 4)
+
+					elif line[1] == "HEX":
+
+						line[2] = convert.minHexLength(line[2], 4)
+						self.build[lineNum] = line[2]
+
+					elif line[1] == "ADR":
+
+						ADRLookup[line[2]] = lineNum
+
+
+					self.code[lineNum][0] = self.code[lineNum][1]
+					self.code[lineNum][1] = self.code[lineNum][2]
+
+				elif line[0] == "DEC":
+
+					self.build[lineNum] = convert.decToHex(int(line[1]), 4)
+
+				elif line[0] == "HEX":
+					line[1] = convert.minHexLength(line[1], 4)
+					self.build[lineNum] = line[1]
+
+				elif line[0] == "ADR":
+					ADRLookup[line[1]] = lineNum
+			except Exception as e:
+				r = ""
+				print(e)
+				for i in self.code[lineNum]:
+					r += i + " "
+				print("Exception detected in line "+str(lineNum)+ " "+r)
 				
-				self.code[lineNum][0] = self.code[lineNum][1]
-				self.code[lineNum][1] = self.code[lineNum][2]
+		
+		for direct in ADRLookup:
+			self.build[ADRLookup[direct]] = convert.minHexLength(self.directives[direct].getHex(), 4)
 	
-	def getOpcodes(self):
+	def assemble(self):
 		for lineNum in range(len(self.code)):
 			line = self.code[lineNum]
 			if line[0] in opcodes:
@@ -130,10 +181,12 @@ class Assembler:
 				else:
 					self.build[lineNum] = opcodes[line[0]]+"000"
 	
+				
+			
 	
 	def parse(self):
-		self.getDirectives()
-		self.getOpcodes()
+		self.getDirectives() # loads all directives into a dict for usage in second parse
+		self.assemble() # actually assembles code
 				
 
 	def write(self, fileName=None):

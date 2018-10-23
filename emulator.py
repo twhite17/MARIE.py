@@ -3,6 +3,7 @@
 import convert
 from numpy import int16
 from numpy import array
+from sys import argv
 
 opcodes = {
 	"ADD"	:	"3",
@@ -23,41 +24,7 @@ opcodes = {
 	
 	}
 
-class Value:
-	
-	def __init__(self, maxHexLen = 4):
-		self._dec = 0
-		self._hex = "0"*maxHexLen
-		self.maxHexLen = maxHexLen
-	
-	def setHex(self, val):
-		self._hex = val
-		self._dec = convert.hexToDec(val)
-		if len(self._hex) > self.maxHexLen:
-			for n in range(len(self._hex) - self.maxHexLen):
-				self._hex = self._hex[1:]
-		if len(self._hex) < self.maxHexLen:
-			for n in range(self.maxHexLen - len(self._hex)):
-				self._hex = "0" + self._hex
-				
-		self._dec = convert.hexToDec(self._hex)
-	
-	def setDec(self, val):
-		self._hex = convert.decToHex(val, self.maxHexLen)
-		self._dec = val
-	
-	def getHex(self):
-		return self._hex
-	
-	def getDec(self):
-		return self._dec
-	
-	def __getitem__(self, index):
-		return self._hex[index]
 
-def loadHex(val):
-	
-	val = val.lower()
 	
 	
 	
@@ -91,6 +58,8 @@ class Emulator:
 		self.PC 	= int16(0)
 		self.IN 	= int16(0)
 		self.OUT 	= int16(0)
+		self.outputMode = "UNICODE"
+		self.inputBuffer = ""
 		
 		if inp == None:
 			f = open(fileName, "r")
@@ -170,9 +139,70 @@ class Emulator:
 			
 		elif opcodes["INPUT"] == ins:
 			
-			pass
+			if self.outputMode == "UNICODE":
+				if len(self.inputBuffer) <= 0:
+					self.inputBuffer = list(input(""))
+					
+
+				inp = self.inputBuffer[0]
+				
+				if inp == ":":
+					
+					if self.inputBuffer[1] == "d":
+						self.IN = int16("".join(i for i in self.inputBuffer[2:]))
+						self.AC = self.IN
+						print(self.IN)
+						self.outputMode = "DEC"
+					
+					elif self.inputBuffer[1] == "u":
+						self.inputBuffer = self.inputBuffer[1:]
+						self.IN = int16(ord(inp))
+						self.AC = self.IN
+						
+				else:
+					self.inputBuffer = self.inputBuffer[1:]
+					self.IN = int16(ord(inp))
+					self.AC = self.IN
+			
+			elif self.outputMode == "DEC":
+				
+				try:
+					inp = input("")
+					if inp[0] == ":":
+						if inp[1] == "u":
+							self.inputBuffer = list(inp[2:])
+							self.outputMode = "UNICODE"
+						
+						elif inp[1] == "d":
+							self.IN = int16(inp[2:])
+							self.AC = self.IN
+					
+					else:
+						self.IN = int16(inp)
+						self.AC = self.IN
+							
+							
+				except:
+					raise ValueError("ValueError, Input must be an integer.")
+				
+				
+			elif self.outputMode == "HEX":
+				pass
+				
+			
+			
+			
+			
+			
+			
 		elif opcodes["OUTPUT"] == ins:
-			print(self.AC)
+			if self.outputMode == "UNICODE":
+				print(chr(self.AC))
+				self.OUT = self.AC
+			elif self.outputMode == "DEC":
+				print(self.AC)
+				self.OUT = self.AC
+				
 			
 		elif opcodes["JUMP"] == ins:
 			self.PC = X - 1
@@ -230,10 +260,14 @@ class Emulator:
 		
 		
 		
-
-		
-e = Emulator(fileName = "test.txt")
-x = 0
-for i in e:
-	x += 1
-print("finished program excecution")
+if __name__ == "__main__":
+	if len(argv) == 1:
+		inp = input("Please enter assembled code filename : ")
+	else:
+		inp = argv[1]
+			
+	e = Emulator(fileName = inp)
+	x = 0
+	for i in e:
+		x += 1
+	print("finished program excecution")
