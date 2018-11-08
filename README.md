@@ -30,4 +30,16 @@ All that being said, please feel free to report bugs though.  ;)
 
 TLDR:
   Don't be stupid, make sure your assignment works in MARIE.js before submission. Use this software at your own risk.
+  
+  
+  
+TODO:
+  
+  - Add better error handling and reporting (the assembler current just crashes with invalid code)
+  - I still cant run my original assignment so theres some more bugs in there somewhere..
+  - Better internal documentation is needed and perhaps some external documentation one day.
+  - Better Debugging tools, (although there won't be anything too fancy it would be nice to atleast look at whats in memory after a system halt.
+  
+  
+
 
