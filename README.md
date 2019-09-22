@@ -1,6 +1,6 @@
 # MARIE.py
 A simple Assembler and Emulator(kind of) for MARIE (Machine Architecture that is Really Intuitive and Easy)
-Yes, emulator not simulator. This is because this implementation lacks a lot of the visualisation tools and other features that come in the MARIE.js simulator. Additionally code needs to be "assembled" by an assembler which is more like the functionality of an emulator even though this project isn't technically an emulator either.
+Yes, emulator not simulator. This is because this implementation lacks a lot of the visualisation tools and other features that come in the MARIE.js simulator. Additionally code needs to be "assembled" by an assembler which is more like the functionality of an emulator.
 
 Why did I make this?
   
