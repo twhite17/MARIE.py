@@ -31,7 +31,24 @@ All that being said, please feel free to report bugs though.  ;)
 TLDR:
   If you wish to use this for your assignment, make sure it works in MARIE.js before submission. Use this software at your own risk.
   
+
+
+
+How To Use:
+
+  - Create a file with the ".mas" extention and write your assembly code in here.
+    See https://github.com/MARIE-js/MARIE.js/wiki/MARIE-Instruction-Set-(with-Opcodes) for more information.
   
+  - Run "python assembler.py"
+  
+  - Type in the filename of your assembly code (don't forget the file extension)
+  
+  - The assembler will output an assembled version of your program with the ".txt" extension
+    You can read this file in a text editor if you like (to see what your assembled code looks like)
+  
+  - Run your assembled code by typing "python emulator.py" and entering the filename of your assembled code.
+  
+
   
 TODO:
   
@@ -41,5 +58,4 @@ TODO:
   - Better Debugging tools, (although there won't be anything too fancy it would be nice to atleast look at whats in memory after a system halt.
   
   
-
 
