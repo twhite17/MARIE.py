@@ -1,6 +1,6 @@
 # MARIE.py
 A simple Assembler and Emulator(kind of) for MARIE (Machine Architecture that is Really Intuitive and Easy)
-Yes, emulator not simulator. This is because this implementation lacks a lot of the visualisation tools and other features that come in the MARIE.js simulator. Additionally code needs to be "assembled" by an assembler which is more like the functionality of an emulator even though this project isn't technically an emulator either.
+Yes, emulator not simulator. This is because this implementation lacks a lot of the visualisation tools and other features that come in the MARIE.js simulator. Additionally code needs to be "assembled" by an assembler which is more like the functionality of an emulator.
 
 Why did I make this?
   
@@ -20,7 +20,7 @@ That's it!
   
 DISCLAIMERS:
 
-In case you couldn't tell. I did not originally develop MARIE. This project was inspired by https://github.com/MARIE-js/MARIE.js all credit goes to it's original developers.
+In case you didn't know. I did not originally develop MARIE. This project was inspired by https://github.com/MARIE-js/MARIE.js all credit goes to it's original developers.
 
 I am not in any way associated with the developers of MARIE.js and I am certainly not an expert when it comes to writing compilers and/or understanding hardware architectures.
 
@@ -29,7 +29,7 @@ I will not take any legal or other responsibility for ANY issues with this softw
 All that being said, please feel free to report bugs though.  ;)
 
 TLDR:
-  Don't be stupid, make sure your assignment works in MARIE.js before submission. Use this software at your own risk.
+  If you wish to use this for your assignment, make sure it works in MARIE.js before submission. Use this software at your own risk.
   
   
   
